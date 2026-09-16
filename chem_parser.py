@@ -60,7 +60,7 @@ def parse_cdxml(content: str) -> Molecule:
             bonds.append(Bond(begin_id=begin_id, end_id=end_id))
 
     if not atoms:
-        raise ValueError("No atoms were found in the file")
+        raise ValueError("文件中未找到原子信息")
 
     return Molecule(atoms=atoms, bonds=bonds)
 
@@ -71,10 +71,10 @@ def load_cdx_or_cdxml(path: Path) -> Molecule:
         decoded = raw.decode("utf-8")
     except UnicodeDecodeError as exc:
         raise ValueError(
-            "Unsupported binary CDX file. Please export as CDXML (XML-based ChemDraw format)."
+            "暂不支持二进制 CDX 文件，请先导出为 CDXML（XML 格式）再导入。"
         ) from exc
 
     if "<CDXML" not in decoded and "<cdxml" not in decoded:
-        raise ValueError("Input is not a CDXML document")
+        raise ValueError("输入内容不是有效的 CDXML 文档")
 
     return parse_cdxml(decoded)

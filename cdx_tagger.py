@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Simple ChemDraw CDX/CDXML viewer with per-atom tagging."""
+"""用于查看 ChemDraw CDX/CDXML 并为原子添加标签的简易工具。"""
 
 from __future__ import annotations
 
@@ -15,15 +15,15 @@ from chem_parser import Molecule, load_cdx_or_cdxml
 class CdxTaggerApp:
     def __init__(self, root: tk.Tk, file_path: Path | None = None):
         self.root = root
-        self.root.title("ChemDatabase CDX Tagger")
+        self.root.title("ChemDatabase 化学结构标注器")
         self.molecule = Molecule()
         self.atom_positions: dict[str, tuple[float, float]] = {}
 
         controls = tk.Frame(root)
         controls.pack(fill=tk.X, padx=8, pady=8)
 
-        tk.Button(controls, text="Open .cdx/.cdxml", command=self.open_file).pack(side=tk.LEFT)
-        tk.Button(controls, text="Clear tags", command=self.clear_tags).pack(side=tk.LEFT, padx=8)
+        tk.Button(controls, text="打开 .cdx/.cdxml", command=self.open_file).pack(side=tk.LEFT)
+        tk.Button(controls, text="清空标签", command=self.clear_tags).pack(side=tk.LEFT, padx=8)
 
         content = tk.PanedWindow(root, sashrelief=tk.RAISED)
         content.pack(fill=tk.BOTH, expand=True)
@@ -33,7 +33,7 @@ class CdxTaggerApp:
         content.add(self.canvas, stretch="always")
 
         sidebar = tk.Frame(content)
-        tk.Label(sidebar, text="Chemical tags").pack(anchor="w", padx=8, pady=(8, 4))
+        tk.Label(sidebar, text="化学标签").pack(anchor="w", padx=8, pady=(8, 4))
         self.tags_list = tk.Listbox(sidebar, width=40)
         self.tags_list.pack(fill=tk.BOTH, expand=True, padx=8, pady=(0, 8))
         content.add(sidebar)
@@ -43,8 +43,8 @@ class CdxTaggerApp:
 
     def open_file(self) -> None:
         file_name = filedialog.askopenfilename(
-            title="Open ChemDraw file",
-            filetypes=[("ChemDraw files", "*.cdx *.cdxml"), ("All files", "*.*")],
+            title="打开 ChemDraw 文件",
+            filetypes=[("ChemDraw 文件", "*.cdx *.cdxml"), ("所有文件", "*.*")],
         )
         if file_name:
             self.load_file(Path(file_name))
@@ -53,7 +53,7 @@ class CdxTaggerApp:
         try:
             self.molecule = load_cdx_or_cdxml(path)
         except (OSError, ValueError, ET.ParseError) as exc:
-            messagebox.showerror("Unable to open file", str(exc))
+            messagebox.showerror("无法打开文件", str(exc))
             return
         self.draw_molecule()
 
@@ -111,8 +111,8 @@ class CdxTaggerApp:
 
         atom = self.molecule.atoms[closest_atom_id]
         tag = simpledialog.askstring(
-            "Tag chemical",
-            f"Set tag for atom {atom.atom_id} ({atom.label}):",
+            "标注化学对象",
+            f"为原子 {atom.atom_id}（{atom.label}）设置标签：",
             initialvalue=atom.tag,
             parent=self.root,
         )
@@ -129,8 +129,8 @@ class CdxTaggerApp:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="View ChemDraw CDX/CDXML and tag chemicals")
-    parser.add_argument("file", nargs="?", help="Optional path to .cdx/.cdxml file")
+    parser = argparse.ArgumentParser(description="查看 ChemDraw CDX/CDXML 并为化学对象添加标签")
+    parser.add_argument("file", nargs="?", help="可选：.cdx/.cdxml 文件路径")
     args = parser.parse_args()
 
     root = tk.Tk()
